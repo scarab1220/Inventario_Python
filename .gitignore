@@ -1,13 +1,21 @@
+# Archivos y carpetas que Git debe ignorar
+
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 *.log
-.env
+
+# Entornos virtuales
 venv/
 env/
-data/*.json
-data/*.txt
-.idea/
+
+# Archivos ocultos de IDEs
 .vscode/
+.idea/
+
+# Archivos de datos
+datos.txt
+*.json
+
+# Otros
 .DS_Store

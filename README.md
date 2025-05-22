@@ -1,22 +1,38 @@
 # Inventario de Productos en Python 🗃️
 
-Este es un sistema de inventario de productos desarrollado en Python con una interfaz gráfica usando `tkinter` / `customtkinter`. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) y guardar los datos en un archivo `.txt` o `.json`.
+Este es un sistema básico de inventario desarrollado en Python con una interfaz gráfica utilizando `tkinter`. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) y guarda los datos de manera persistente en un archivo de texto plano.
 
 ## 📌 Funcionalidades
 
-- Crear nuevos productos con ID, nombre, cantidad y precio
-- Visualizar productos existentes
-- Editar productos
-- Eliminar productos
-- Almacenamiento persistente en archivo
-- Interfaz gráfica intuitiva
+- Crear productos con ID, nombre, cantidad y precio
+- Visualizar todos los productos
+- Editar un producto por su ID
+- Eliminar un producto por su ID
+- Guardado automático en archivo `datos.txt`
+- Interfaz gráfica amigable
 
-## 🚀 Requisitos
+## 🛠 Requisitos
 
 - Python 3.10 o superior
-- `customtkinter` (si usas GUI moderna)
+- Librerías utilizadas:
+  - `tkinter` (incluido en Python)
+  - `os`
+  - `tkinter.messagebox` y `tkinter.simpledialog`
 
-Instala los requerimientos con:
+## ▶️ Cómo ejecutar
+
+1. Asegúrate de tener Python instalado
+2. Abre la terminal y navega hasta la carpeta `INVENTARIO PROYECTO`
+3. Ejecuta el archivo principal:
 
 ```bash
-pip install -r requirements.txt
+python inventario_gui.py
+
+## 📁 Estructura del proyecto
+
+INVENTARIO PROYECTO/
+├── inventario_gui.py
+├── datos.txt
+├── README.md
+├── requirements.txt
+└── .gitignore
