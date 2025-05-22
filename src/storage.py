@@ -1,4 +1,4 @@
-def load_data(ruta):
+def cargar_datos(ruta):
     inventario = []
     try:
         with open(ruta, "r") as f:

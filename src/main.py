@@ -1,9 +1,6 @@
-from gui import start_interface
-from storage import load_data
+from gui import iniciar_interfaz
+from storage import cargar_datos
 
 if __name__ == "__main__":
-    # cargar información de la base de datos
-    load_data("data/datos.txt")
-    
-    # iniciar la interfaz gráfica
-    start_interface()
+    inventario = cargar_datos("data/datos.txt")
+    iniciar_interfaz(inventario)
