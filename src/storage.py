@@ -1,22 +1,18 @@
+# src/storage.py
+import json
+from src.producto import Producto
+
 def cargar_datos(ruta):
-    inventario = []
+    productos = []
     try:
         with open(ruta, "r") as f:
-            for linea in f:
-                partes = linea.strip().split("|")
-                if len(partes) == 4:
-                    inventario.append({
-                        "id": partes[0],
-                        "nombre": partes[1],
-                        "cantidad": int(partes[2]),
-                        "precio": float(partes[3])
-                    })
+            datos = json.load(f)
+            for item in datos:
+                productos.append(Producto.from_dict(item))
     except FileNotFoundError:
         pass
-    return inventario
+    return productos
 
-def guardar_datos(ruta, inventario):
+def guardar_datos(ruta, productos):
     with open(ruta, "w") as f:
-        for p in inventario:
-            linea = f"{p['id']}|{p['nombre']}|{p['cantidad']}|{p['precio']}\n"
-            f.write(linea)
+        json.dump([p.to_dict() for p in productos], f, indent=4)
