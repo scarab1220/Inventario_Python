@@ -1,5 +1,5 @@
 # src/inventario.py
-from src.producto import Producto
+from producto import Producto
 import uuid
 
 class Inventario:

@@ -1,6 +1,6 @@
 # src/storage.py
 import json
-from src.producto import Producto
+from producto import Producto
 
 def cargar_datos(ruta):
     productos = []

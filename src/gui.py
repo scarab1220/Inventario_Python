@@ -1,45 +1,115 @@
+# src/gui.py
 import tkinter as tk
-from tkinter import messagebox, simpledialog
-from logic import crear_producto, listar_productos, actualizar_producto, eliminar_producto
-from storage import guardar_datos
+from tkinter import ttk, messagebox
+from producto import Producto
 
 def iniciar_interfaz(inventario):
-    def agregar():
-        nombre = simpledialog.askstring("Nombre", "Nombre del producto:")
-        cantidad = simpledialog.askinteger("Cantidad", "Cantidad:")
-        precio = simpledialog.askfloat("Precio", "Precio:")
-        crear_producto(inventario, nombre, cantidad, precio)
-        guardar_datos("data/datos.txt", inventario)
-        messagebox.showinfo("Listo", "Producto agregado.")
+    root = tk.Tk()
+    root.title("Sistema de Inventario")
+    root.geometry("700x500")
+    root.resizable(False, False)
 
-    def mostrar():
-        texto = listar_productos(inventario)
-        messagebox.showinfo("Inventario", texto)
+    # === Variables de entrada ===
+    nombre_var = tk.StringVar()
+    cantidad_var = tk.StringVar()
+    precio_var = tk.StringVar()
+    producto_seleccionado = [None]
 
-    def editar():
-        id = simpledialog.askstring("ID", "ID del producto a editar:")
-        nuevo_nombre = simpledialog.askstring("Nuevo nombre", "Nuevo nombre:")
-        nueva_cantidad = simpledialog.askinteger("Cantidad", "Nueva cantidad:")
-        nuevo_precio = simpledialog.askfloat("Precio", "Nuevo precio:")
-        if actualizar_producto(inventario, id, nuevo_nombre, nueva_cantidad, nuevo_precio):
-            guardar_datos("data/datos.txt", inventario)
-            messagebox.showinfo("Éxito", "Producto actualizado.")
-        else:
-            messagebox.showerror("Error", "Producto no encontrado.")
+    # === Funciones internas ===
+    def actualizar_tabla():
+        tabla.delete(*tabla.get_children())
+        for p in inventario.listar():
+            tabla.insert("", "end", iid=p.id, values=(p.id, p.nombre, p.cantidad, f"${p.precio:.2f}"))
 
-    def eliminar():
-        id = simpledialog.askstring("Eliminar", "ID del producto:")
-        if eliminar_producto(inventario, id):
-            guardar_datos("data/datos.txt", inventario)
-            messagebox.showinfo("Éxito", "Producto eliminado.")
-        else:
-            messagebox.showerror("Error", "Producto no encontrado.")
+    def limpiar_campos():
+        nombre_var.set("")
+        cantidad_var.set("")
+        precio_var.set("")
+        producto_seleccionado[0] = None
+        tabla.selection_remove(tabla.selection())
 
-    app = tk.Tk()
-    app.title("Inventario")
-    tk.Button(app, text="Agregar", command=agregar).pack(fill='x')
-    tk.Button(app, text="Mostrar", command=mostrar).pack(fill='x')
-    tk.Button(app, text="Editar", command=editar).pack(fill='x')
-    tk.Button(app, text="Eliminar", command=eliminar).pack(fill='x')
-    tk.Button(app, text="Salir", command=app.quit).pack(fill='x')
-    app.mainloop()
+    def crear_producto():
+        try:
+            nombre = nombre_var.get()
+            cantidad = int(cantidad_var.get())
+            precio = float(precio_var.get())
+            if not nombre:
+                raise ValueError("Nombre vacío.")
+            inventario.agregar(nombre, cantidad, precio)
+            actualizar_tabla()
+            limpiar_campos()
+        except ValueError as e:
+            messagebox.showerror("Error", f"Datos inválidos: {e}")
+
+    def seleccionar_producto(event):
+        selected = tabla.focus()
+        if selected:
+            producto = inventario.buscar(selected)
+            if producto:
+                nombre_var.set(producto.nombre)
+                cantidad_var.set(str(producto.cantidad))
+                precio_var.set(str(producto.precio))
+                producto_seleccionado[0] = producto.id
+
+    def actualizar_producto():
+        if not producto_seleccionado[0]:
+            messagebox.showwarning("Aviso", "Selecciona un producto.")
+            return
+        try:
+            id = producto_seleccionado[0]
+            nombre = nombre_var.get()
+            cantidad = int(cantidad_var.get())
+            precio = float(precio_var.get())
+            if not nombre:
+                raise ValueError("Nombre vacío.")
+            if inventario.actualizar(id, nombre, cantidad, precio):
+                actualizar_tabla()
+                limpiar_campos()
+            else:
+                messagebox.showerror("Error", "No se encontró el producto.")
+        except ValueError as e:
+            messagebox.showerror("Error", f"Datos inválidos: {e}")
+
+    def eliminar_producto():
+        id = producto_seleccionado[0]
+        if not id:
+            messagebox.showwarning("Aviso", "Selecciona un producto.")
+            return
+        confirm = messagebox.askyesno("Confirmar", "¿Eliminar este producto?")
+        if confirm:
+            inventario.eliminar(id)
+            actualizar_tabla()
+            limpiar_campos()
+
+    # === Layout ===
+
+    frame_form = ttk.LabelFrame(root, text="Datos del producto", padding=10)
+    frame_form.pack(fill="x", padx=10, pady=5)
+
+    ttk.Label(frame_form, text="Nombre:").grid(row=0, column=0, sticky="e")
+    ttk.Entry(frame_form, textvariable=nombre_var, width=30).grid(row=0, column=1, padx=5)
+
+    ttk.Label(frame_form, text="Cantidad:").grid(row=1, column=0, sticky="e")
+    ttk.Entry(frame_form, textvariable=cantidad_var, width=10).grid(row=1, column=1, sticky="w", padx=5)
+
+    ttk.Label(frame_form, text="Precio:").grid(row=2, column=0, sticky="e")
+    ttk.Entry(frame_form, textvariable=precio_var, width=10).grid(row=2, column=1, sticky="w", padx=5)
+
+    frame_botones = ttk.Frame(root)
+    frame_botones.pack(pady=5)
+
+    ttk.Button(frame_botones, text="Crear", command=crear_producto).grid(row=0, column=0, padx=5)
+    ttk.Button(frame_botones, text="Actualizar", command=actualizar_producto).grid(row=0, column=1, padx=5)
+    ttk.Button(frame_botones, text="Eliminar", command=eliminar_producto).grid(row=0, column=2, padx=5)
+    ttk.Button(frame_botones, text="Limpiar", command=limpiar_campos).grid(row=0, column=3, padx=5)
+
+    tabla = ttk.Treeview(root, columns=("ID", "Nombre", "Cantidad", "Precio"), show="headings")
+    tabla.heading("ID", text="ID")
+    tabla.heading("Nombre", text="Nombre")
+    tabla.heading("Cantidad", text="Cantidad")
+    tabla.heading("Precio", text="Precio")
+    tabla.pack(fill="both", expand=True, padx=10, pady=10)
+    tabla.bind("<<TreeviewSelect>>", seleccionar_producto)
+
+    actualizar_tabla()
+    root.mainloop()

@@ -1,5 +1,5 @@
 # src/main.py
-from src.inventario import Inventario
+from inventario import Inventario
 from storage import cargar_datos, guardar_datos
 from gui import iniciar_interfaz
 
