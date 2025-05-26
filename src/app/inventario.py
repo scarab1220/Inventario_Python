@@ -51,9 +51,12 @@ class Inventario:
     def agregar_producto(self, producto):
         self._productos.append(producto)
 
-    def agregar_categoria(self, categoria):
-        if categoria.nombre not in [c.nombre for c in self._categorias]:
-            self._categorias.append(categoria)
+    def agregar_categoria(self, nombre):
+        # Only add if not already present
+        if nombre not in [c.nombre for c in self._categorias]:
+            self._categorias.append(Categoria(nombre))
+            return True
+        return False
 
     def listar_categorias(self):
         return self._categorias
