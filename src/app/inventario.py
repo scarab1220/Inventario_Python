@@ -68,6 +68,24 @@ class Inventario:
                 return categoria
         return None
 
+    def eliminar_categoria(self, nombre_categoria):
+        """
+        Elimina la categoría por nombre y elimina la referencia en los productos.
+        Retorna True si se eliminó, False si no existe.
+        """
+        # Elimina la categoría de la lista interna
+        categorias_filtradas = [c for c in self._categorias if c.nombre != nombre_categoria]
+        if len(categorias_filtradas) == len(self._categorias):
+            return False  # No se encontró la categoría
+        self._categorias = categorias_filtradas
+
+        # Opcional: Elimina la referencia en los productos
+        for producto in self._productos:
+            if getattr(producto, "categoria", None) == nombre_categoria:
+                producto.categoria = ""
+        self.guardar()
+        return True
+
 def actualizar_tabla(tabla, inventario):
     tabla.delete(*tabla.get_children())
     for p in inventario.listar():

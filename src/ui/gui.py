@@ -155,8 +155,40 @@ def iniciar_interfaz(inventario, historial):
                 messagebox.showerror("Error", f"No se encontró la categoría '{categoria_seleccionada}'.")
 
     def mostrar_categorias():
-        categorias_str = "\n".join(f"{c.nombre} ({len(getattr(c, 'productos', []))} productos)" for c in inventario.listar_categorias())
-        messagebox.showinfo("Categorías", categorias_str if categorias_str else "No hay categorías registradas.")
+        ventana_categorias = tk.Toplevel(root)
+        ventana_categorias.title("Categorías")
+        ventana_categorias.geometry("520x350")
+
+        # Frame para la tabla y el scrollbar
+        frame_tabla = ttk.Frame(ventana_categorias)
+        frame_tabla.pack(fill="both", expand=True)
+
+        tree = ttk.Treeview(frame_tabla, columns=("ID", "Nombre", "Productos", "Total Precio"), show="headings")
+        tree.heading("ID", text="ID")
+        tree.heading("Nombre", text="Nombre")
+        tree.heading("Productos", text="Productos")
+        tree.heading("Total Precio", text="Total Precio")
+        tree.pack(side="left", fill="both", expand=True)
+
+        # Scrollbar vertical correctamente asociado
+        scrollbar = ttk.Scrollbar(frame_tabla, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
+
+        productos = inventario.listar()
+        for c in inventario.listar_categorias():
+            productos_categoria = [p for p in productos if getattr(p, "categoria", "") == c.nombre]
+            total_productos = sum(getattr(p, "cantidad", 0) for p in productos_categoria)
+            total_precio = sum(getattr(p, "precio", 0) * getattr(p, "cantidad", 0) for p in productos_categoria)
+            tree.insert(
+                "", "end",
+                values=(
+                    getattr(c, "id", ""),
+                    c.nombre,
+                    total_productos,
+                    f"${total_precio:.2f}"
+                )
+            )
 
     def actualizar_categorias_combo():
         categorias = [c.nombre for c in inventario.listar_categorias()]

@@ -9,6 +9,31 @@
             "fecha": "2025-05-26 14:44:57",
             "accion": "Crear producto",
             "descripcion": "Producto 'Coca-Cola' creado."
+        },
+        {
+            "fecha": "2025-05-26 14:47:01",
+            "accion": "Crear producto",
+            "descripcion": "Producto 'Producto Prueba' creado."
+        },
+        {
+            "fecha": "2025-05-26 14:47:09",
+            "accion": "Actualizar producto",
+            "descripcion": "Producto 'Producto Prueba' actualizado."
+        },
+        {
+            "fecha": "2025-05-26 14:47:22",
+            "accion": "Eliminar producto",
+            "descripcion": "Producto 'Producto Prueba' eliminado."
+        },
+        {
+            "fecha": "2025-05-26 14:47:34",
+            "accion": "Crear categoría",
+            "descripcion": "Categoría 'Snacks' creada."
+        },
+        {
+            "fecha": "2025-05-26 14:57:49",
+            "accion": "Eliminar categoría",
+            "descripcion": "Categoría 'Snacks' eliminada."
         }
     ]
 }
