@@ -2,13 +2,13 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 
-def iniciar_interfaz(inventario):
+def iniciar_interfaz(inventario, historial):
     root = tk.Tk()
     root.title("Sistema de Inventario")
     root.geometry("900x600")
-    root.resizable(True, True)  # Allow window resizing
+    root.resizable(True, True)  # Permitir redimensionar la ventana
 
-    # Modern style
+    # === ESTILO MODERNO ===
     style = ttk.Style(root)
     style.theme_use("clam")
     style.configure("TFrame", background="#e3f0fc")
@@ -22,11 +22,11 @@ def iniciar_interfaz(inventario):
     root.option_add("*Font", ("Segoe UI", 10))
     root.configure(bg="#e3f0fc")
 
-    # === HEADER ===
+    # === ENCABEZADO PRINCIPAL ===
     header = ttk.Label(root, text="Sistema de Inventario", font=("Segoe UI", 18, "bold"), background="#e3f0fc", foreground="#1a3c6b")
     header.pack(fill="x", padx=10, pady=(10, 0))
 
-    # === Variables de entrada ===
+    # === VARIABLES DE ENTRADA ===
     nombre_var = tk.StringVar()
     cantidad_var = tk.StringVar()
     precio_var = tk.StringVar()
@@ -34,11 +34,11 @@ def iniciar_interfaz(inventario):
     categoria_var = tk.StringVar()
     filter_var = tk.StringVar()
 
-    # === RIBBON ===
+    # === CINTA DE ACCIONES (RIBBON) ===
     ribbon = ttk.Frame(root, padding=10)
     ribbon.pack(fill="x", padx=10, pady=(10, 0))
 
-    # Product Actions
+    # Acciones de Producto
     product_frame = ttk.LabelFrame(ribbon, text="Acciones de Producto", padding=8)
     product_frame.pack(side="left", padx=5, pady=0)
     ttk.Button(product_frame, text="Crear", command=lambda: crear_producto()).pack(side="left", padx=2)
@@ -46,18 +46,18 @@ def iniciar_interfaz(inventario):
     ttk.Button(product_frame, text="Eliminar", command=lambda: eliminar_producto()).pack(side="left", padx=2)
     ttk.Button(product_frame, text="Limpiar", command=lambda: limpiar_campos()).pack(side="left", padx=2)
 
-    # Category Actions
+    # Acciones de Categoría
     category_frame = ttk.LabelFrame(ribbon, text="Acciones de Categoría", padding=8)
     category_frame.pack(side="left", padx=5, pady=0)
     ttk.Button(category_frame, text="Mostrar Categorías", command=lambda: mostrar_categorias()).pack(side="left", padx=2)
     ttk.Button(category_frame, text="Crear Categoría", command=lambda: crear_categoria()).pack(side="left", padx=2)
     ttk.Button(category_frame, text="Eliminar Categoría", command=lambda: eliminar_categoria()).pack(side="left", padx=2)
 
-    # === TOP ROW: Product Form and Filter ===
+    # === FILA SUPERIOR: FORMULARIO Y FILTRO ===
     top_row_frame = ttk.Frame(root)
     top_row_frame.pack(fill="x", padx=10, pady=5)
 
-    # Product Form (left)
+    # Formulario de Producto (izquierda)
     frame_form = ttk.LabelFrame(top_row_frame, text="Datos del producto", padding=10)
     frame_form.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
 
@@ -72,7 +72,7 @@ def iniciar_interfaz(inventario):
     categoria_combo.grid(row=3, column=1, padx=2, pady=2, sticky="ew")
     frame_form.columnconfigure(1, weight=1)
 
-    # Filter (right)
+    # Filtro de Productos (derecha)
     filter_frame = ttk.LabelFrame(top_row_frame, text="Filtrar Productos", padding=8)
     filter_frame.grid(row=0, column=1, sticky="nsew")
     ttk.Label(filter_frame, text="Filtrar:").pack(side="left", padx=2)
@@ -80,11 +80,11 @@ def iniciar_interfaz(inventario):
     filter_entry.pack(side="left", padx=2)
     ttk.Button(filter_frame, text="Aplicar Filtro", command=lambda: filtrar_tabla()).pack(side="left", padx=2)
 
-    # Make both columns expand equally if window is resized
+    # Hacer que ambas columnas se expandan si la ventana cambia de tamaño
     top_row_frame.columnconfigure(0, weight=1)
     top_row_frame.columnconfigure(1, weight=1)
 
-    # === PRODUCT TABLE WITH SCROLLBARS ===
+    # === TABLA DE PRODUCTOS CON BARRAS DE DESPLAZAMIENTO ===
     frame_tabla = ttk.Frame(root)
     frame_tabla.pack(fill="both", expand=True, padx=10, pady=10)
 
@@ -110,7 +110,7 @@ def iniciar_interfaz(inventario):
     for col in ("ID", "Nombre", "Cantidad", "Precio", "Categoría"):
         tabla.column(col, width=100, anchor="center", stretch=True)
 
-    # === PRODUCT CRUD FUNCTIONS ===
+    # === FUNCIONES CRUD DE PRODUCTO ===
     def crear_producto():
         try:
             nombre = nombre_var.get()
@@ -120,6 +120,7 @@ def iniciar_interfaz(inventario):
             if not nombre:
                 raise ValueError("Nombre vacío.")
             inventario.agregar(nombre, cantidad, precio, categoria)
+            historial.registrar_accion("Crear producto", f"Producto '{nombre}' creado.")
             actualizar_tabla()
             limpiar_campos()
         except ValueError as e:
@@ -138,6 +139,7 @@ def iniciar_interfaz(inventario):
             if not nombre:
                 raise ValueError("Nombre vacío.")
             if inventario.actualizar(id, nombre, cantidad, precio, categoria):
+                historial.registrar_accion("Actualizar producto", f"Producto '{nombre}' actualizado.")
                 actualizar_tabla()
                 limpiar_campos()
             else:
@@ -152,7 +154,9 @@ def iniciar_interfaz(inventario):
             return
         confirm = messagebox.askyesno("Confirmar", "¿Eliminar este producto?")
         if confirm:
+            producto = inventario.buscar(id)
             inventario.eliminar(id)
+            historial.registrar_accion("Eliminar producto", f"Producto '{producto.nombre}' eliminado.")
             actualizar_tabla()
             limpiar_campos()
 
@@ -182,11 +186,12 @@ def iniciar_interfaz(inventario):
                 values=(p.id, p.nombre, p.cantidad, f"${p.precio:.2f}", getattr(p, "categoria", ""))
             )
 
-    # === CATEGORY CRUD FUNCTIONS ===
+    # === FUNCIONES CRUD DE CATEGORÍA ===
     def crear_categoria():
         nombre = tk.simpledialog.askstring("Nueva Categoría", "Ingrese el nombre de la categoría:")
         if nombre:
             inventario.agregar_categoria(nombre)
+            historial.registrar_accion("Crear categoría", f"Categoría '{nombre}' creada.")
             messagebox.showinfo("Éxito", f"Categoría '{nombre}' creada.")
             actualizar_categorias_combo()
         else:
@@ -200,6 +205,7 @@ def iniciar_interfaz(inventario):
         categoria_seleccionada = tk.simpledialog.askstring("Eliminar Categoría", "Ingrese el nombre de la categoría a eliminar:")
         if categoria_seleccionada:
             if inventario.eliminar_categoria(categoria_seleccionada):
+                historial.registrar_accion("Eliminar categoría", f"Categoría '{categoria_seleccionada}' eliminada.")
                 messagebox.showinfo("Éxito", f"Categoría '{categoria_seleccionada}' eliminada.")
                 actualizar_tabla()
                 actualizar_categorias_combo()
@@ -218,7 +224,7 @@ def iniciar_interfaz(inventario):
         else:
             categoria_var.set("")
 
-    # === FILTER AND SORT FUNCTIONS ===
+    # === FUNCIONES DE FILTRO Y ORDENAMIENTO ===
     def filtrar_tabla():
         filtro = filter_var.get().lower()
         tabla.delete(*tabla.get_children())
@@ -239,7 +245,7 @@ def iniciar_interfaz(inventario):
             tabla.move(child, '', index)
         tabla.heading(col, command=lambda: sort_by_column(col, not reverse))
 
-    # Enable sorting on all columns
+    # Habilitar ordenamiento en todas las columnas
     for col in ("ID", "Nombre", "Cantidad", "Precio", "Categoría"):
         tabla.heading(col, text=col, command=lambda _col=col: sort_by_column(_col, False))
 

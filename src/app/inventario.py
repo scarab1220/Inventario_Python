@@ -1,4 +1,3 @@
-# src/inventario.py
 from app.producto import Producto
 from app.categoria import Categoria
 import uuid
@@ -53,7 +52,6 @@ class Inventario:
         self._productos.append(producto)
 
     def agregar_categoria(self, nombre):
-        # Only add if not already present
         if nombre not in [c.nombre for c in self._categorias]:
             self._categorias.append(Categoria(nombre))
             return True

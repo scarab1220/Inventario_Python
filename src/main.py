@@ -1,4 +1,3 @@
-# src/main.py
 from app.inventario import Inventario
 from storage.storage import JsonStorage
 from storage.categoria_storage import cargar_categorias, guardar_categorias
@@ -12,8 +11,8 @@ if __name__ == "__main__":
     inventario.cargar()
     categorias = cargar_categorias("data/categorias.json")
     inventario.set_categorias(categorias)
-    iniciar_interfaz(inventario)
-    guardar_categorias("data/categorias.json", inventario.listar_categorias())
     historial = Historial()
+    iniciar_interfaz(inventario, historial)
+    guardar_categorias("data/categorias.json", inventario.listar_categorias())
     historial.cargar_desde_lista(cargar_historial("data/historial.json"))
     guardar_historial("data/historial.json", historial.to_dict())

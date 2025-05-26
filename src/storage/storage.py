@@ -1,4 +1,3 @@
-# src/storage.py
 import json
 from app.producto import Producto
 

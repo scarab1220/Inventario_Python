@@ -1,7 +1,7 @@
 class Categoria:
     def __init__(self, nombre):
         self.nombre = nombre
-        # ...other attributes...
+
 
     def to_dict(self):
         return {
