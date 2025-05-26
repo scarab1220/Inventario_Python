@@ -1,17 +1,14 @@
 {
-    "acciones": {
-        "acciones": {
-            "acciones": {
-                "acciones": {
-                    "acciones": {
-                        "acciones": {
-                            "acciones": {
-                                "acciones": []
-                            }
-                        }
-                    }
-                }
-            }
+    "acciones": [
+        {
+            "fecha": "2025-05-26 14:44:22",
+            "accion": "Eliminar producto",
+            "descripcion": "Producto 'Coca Cola' eliminado."
+        },
+        {
+            "fecha": "2025-05-26 14:44:57",
+            "accion": "Crear producto",
+            "descripcion": "Producto 'Coca-Cola' creado."
         }
-    }
+    ]
 }

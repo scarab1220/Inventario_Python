@@ -1,12 +1,5 @@
 [
     {
-        "id": "1",
-        "nombre": "Coca Cola",
-        "cantidad": 10,
-        "precio": 12.5,
-        "categoria": "Bebidas Enlatadas"
-    },
-    {
         "id": "79bd7f65",
         "nombre": "Fanta",
         "cantidad": 7,
@@ -32,6 +25,13 @@
         "nombre": "SalvaCola",
         "cantidad": 8,
         "precio": 0.5,
+        "categoria": "Bebidas Enlatadas"
+    },
+    {
+        "id": "4a16b497-5738-467f-b638-9e557301745d",
+        "nombre": "Coca-Cola",
+        "cantidad": 10,
+        "precio": 0.75,
         "categoria": "Bebidas Enlatadas"
     }
 ]
