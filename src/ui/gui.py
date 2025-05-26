@@ -28,23 +28,9 @@ def iniciar_interfaz(inventario):
     precio_var = tk.StringVar()
     producto_seleccionado = [None]
     categoria_var = tk.StringVar()
+    filter_var = tk.StringVar()
 
-    # === Funciones internas ===
-    def actualizar_tabla():
-        tabla.delete(*tabla.get_children())
-        for p in inventario.listar():
-            tabla.insert(
-                "", "end", iid=p.id,
-                values=(p.id, p.nombre, p.cantidad, f"${p.precio:.2f}", getattr(p, "categoria", ""))
-            )
-
-    def limpiar_campos():
-        nombre_var.set("")
-        cantidad_var.set("")
-        precio_var.set("")
-        producto_seleccionado[0] = None
-        tabla.selection_remove(tabla.selection())
-
+    # === PRODUCT CRUD FUNCTIONS ===
     def crear_producto():
         try:
             nombre = nombre_var.get()
@@ -58,17 +44,6 @@ def iniciar_interfaz(inventario):
             limpiar_campos()
         except ValueError as e:
             messagebox.showerror("Error", f"Datos inválidos: {e}")
-
-    def seleccionar_producto(event):
-        selected = tabla.focus()
-        if selected:
-            producto = inventario.buscar(selected)
-            if producto:
-                nombre_var.set(producto.nombre)
-                cantidad_var.set(str(producto.cantidad))
-                precio_var.set(str(producto.precio))
-                categoria_var.set(getattr(producto, "categoria", ""))
-                producto_seleccionado[0] = producto.id
 
     def actualizar_producto():
         if not producto_seleccionado[0]:
@@ -101,10 +76,33 @@ def iniciar_interfaz(inventario):
             actualizar_tabla()
             limpiar_campos()
 
-    def mostrar_categorias():
-        categorias_str = "\n".join(f"{c.nombre} ({len(c.productos)} productos)" for c in inventario.listar_categorias())
-        messagebox.showinfo("Categorías", categorias_str if categorias_str else "No hay categorías registradas.")
+    def seleccionar_producto(event):
+        selected = tabla.focus()
+        if selected:
+            producto = inventario.buscar(selected)
+            if producto:
+                nombre_var.set(producto.nombre)
+                cantidad_var.set(str(producto.cantidad))
+                precio_var.set(str(producto.precio))
+                categoria_var.set(getattr(producto, "categoria", ""))
+                producto_seleccionado[0] = producto.id
 
+    def limpiar_campos():
+        nombre_var.set("")
+        cantidad_var.set("")
+        precio_var.set("")
+        producto_seleccionado[0] = None
+        tabla.selection_remove(tabla.selection())
+
+    def actualizar_tabla():
+        tabla.delete(*tabla.get_children())
+        for p in inventario.listar():
+            tabla.insert(
+                "", "end", iid=p.id,
+                values=(p.id, p.nombre, p.cantidad, f"${p.precio:.2f}", getattr(p, "categoria", ""))
+            )
+
+    # === CATEGORY CRUD FUNCTIONS ===
     def crear_categoria():
         nombre = tk.simpledialog.askstring("Nueva Categoría", "Ingrese el nombre de la categoría:")
         if nombre:
@@ -127,7 +125,11 @@ def iniciar_interfaz(inventario):
                 actualizar_categorias_combo()
             else:
                 messagebox.showerror("Error", f"No se encontró la categoría '{categoria_seleccionada}'.")
-    
+
+    def mostrar_categorias():
+        categorias_str = "\n".join(f"{c.nombre} ({len(c.productos)} productos)" for c in inventario.listar_categorias())
+        messagebox.showinfo("Categorías", categorias_str if categorias_str else "No hay categorías registradas.")
+
     def actualizar_categorias_combo():
         categorias = [c.nombre for c in inventario.listar_categorias()]
         categoria_combo['values'] = categorias
@@ -136,7 +138,28 @@ def iniciar_interfaz(inventario):
         else:
             categoria_var.set("")
 
-    # === Layout ===
+    # === FILTER AND SORT FUNCTIONS ===
+    def filtrar_tabla():
+        filtro = filter_var.get().lower()
+        tabla.delete(*tabla.get_children())
+        for p in inventario.listar():
+            if (filtro in p.nombre.lower()) or (filtro in str(getattr(p, "categoria", "")).lower()):
+                tabla.insert(
+                    "", "end", iid=p.id,
+                    values=(p.id, p.nombre, p.cantidad, f"${p.precio:.2f}", getattr(p, "categoria", ""))
+                )
+
+    def sort_by_column(col, reverse):
+        data = [(tabla.set(child, col), child) for child in tabla.get_children('')]
+        try:
+            data.sort(key=lambda t: float(t[0].replace('$', '').replace(',', '')), reverse=reverse)
+        except ValueError:
+            data.sort(reverse=reverse)
+        for index, (val, child) in enumerate(data):
+            tabla.move(child, '', index)
+        tabla.heading(col, command=lambda: sort_by_column(col, not reverse))
+
+    # === LAYOUT ===
 
     frame_form = ttk.LabelFrame(root, text="Datos del producto", padding=10)
     frame_form.pack(fill="x", padx=10, pady=5)
@@ -154,34 +177,59 @@ def iniciar_interfaz(inventario):
     categoria_combo = ttk.Combobox(frame_form, textvariable=categoria_var, state="readonly", width=28)
     categoria_combo.grid(row=3, column=1, padx=5, pady=2)
 
-    frame_botones = ttk.Frame(root)
-    frame_botones.pack(pady=5)
+    # === Product Buttons ===
+    frame_botones_productos = ttk.Frame(root)
+    frame_botones_productos.pack(pady=5)
 
-    # Load icons (if you have them, otherwise remove image=... from buttons)
-    # icon_crear = tk.PhotoImage(file="icons/add.png")
-    # icon_actualizar = tk.PhotoImage(file="icons/update.png")
-    # icon_eliminar = tk.PhotoImage(file="icons/delete.png")
-    # icon_limpiar = tk.PhotoImage(file="icons/clear.png")
-    # icon_mostrar_categorias = tk.PhotoImage(file="icons/categories.png")
-    # icon_crear_categoria = tk.PhotoImage(file="icons/add_category.png")
-    # icon_eliminar_categoria = tk.PhotoImage(file="icons/delete_category.png")
+    ttk.Button(frame_botones_productos, text="Crear", command=crear_producto).grid(row=0, column=0, padx=5)
+    ttk.Button(frame_botones_productos, text="Actualizar", command=actualizar_producto).grid(row=0, column=1, padx=5)
+    ttk.Button(frame_botones_productos, text="Eliminar", command=eliminar_producto).grid(row=0, column=2, padx=5)
+    ttk.Button(frame_botones_productos, text="Limpiar", command=limpiar_campos).grid(row=0, column=3, padx=5)
 
-    # If you don't have icons, use this for your buttons:
-    ttk.Button(frame_botones, text="Crear", command=crear_producto).grid(row=0, column=0, padx=5)
-    ttk.Button(frame_botones, text="Actualizar", command=actualizar_producto).grid(row=0, column=1, padx=5)
-    ttk.Button(frame_botones, text="Eliminar", command=eliminar_producto).grid(row=0, column=2, padx=5)
-    ttk.Button(frame_botones, text="Limpiar", command=limpiar_campos).grid(row=0, column=3, padx=5)
-    ttk.Button(frame_botones, text="Mostrar Categorías", command=mostrar_categorias).grid(row=0, column=4, padx=5)
-    ttk.Button(frame_botones, text="Crear Categoría", command=crear_categoria).grid(row=0, column=5, padx=5)
-    ttk.Button(frame_botones, text="Eliminar Categoría", command=eliminar_categoria).grid(row=0, column=6, padx=5)
+    # === Category Buttons ===
+    frame_botones_categorias = ttk.Frame(root)
+    frame_botones_categorias.pack(pady=5)
 
-    tabla = ttk.Treeview(root, columns=("ID", "Nombre", "Cantidad", "Precio", "Categoría"), show="headings")
+    ttk.Button(frame_botones_categorias, text="Mostrar Categorías", command=mostrar_categorias).grid(row=0, column=0, padx=5)
+    ttk.Button(frame_botones_categorias, text="Crear Categoría", command=crear_categoria).grid(row=0, column=1, padx=5)
+    ttk.Button(frame_botones_categorias, text="Eliminar Categoría", command=eliminar_categoria).grid(row=0, column=2, padx=5)
+
+    # === Filter Section ===
+    ttk.Label(root, text="Filtrar:").pack(pady=2)
+    filter_entry = ttk.Entry(root, textvariable=filter_var)
+    filter_entry.pack(pady=2)
+
+    ttk.Button(root, text="Aplicar Filtro", command=filtrar_tabla).pack(pady=2)
+
+    # === Product Table with Scrollbars ===
+    frame_tabla = ttk.Frame(root)
+    frame_tabla.pack(fill="both", expand=True, padx=10, pady=10)
+
+    # Horizontal scrollbar
+    scrollbar_x = ttk.Scrollbar(frame_tabla, orient="horizontal")
+    scrollbar_x.pack(side="bottom", fill="x")
+
+    # Vertical scrollbar
+    scrollbar_y = ttk.Scrollbar(frame_tabla, orient="vertical")
+    scrollbar_y.pack(side="right", fill="y")
+
+    tabla = ttk.Treeview(
+        frame_tabla,
+        columns=("ID", "Nombre", "Cantidad", "Precio", "Categoría"),
+        show="headings",
+        yscrollcommand=scrollbar_y.set,
+        xscrollcommand=scrollbar_x.set
+    )
     tabla.heading("ID", text="ID")
     tabla.heading("Nombre", text="Nombre")
     tabla.heading("Cantidad", text="Cantidad")
     tabla.heading("Precio", text="Precio")
     tabla.heading("Categoría", text="Categoría")
-    tabla.pack(fill="both", expand=True, padx=10, pady=10)
+    tabla.pack(side="left", fill="both", expand=True)
+
+    scrollbar_y.config(command=tabla.yview)
+    scrollbar_x.config(command=tabla.xview)
+
     tabla.bind("<<TreeviewSelect>>", seleccionar_producto)
 
     def on_enter(e):
@@ -191,9 +239,12 @@ def iniciar_interfaz(inventario):
         e.widget['style'] = 'TButton'
 
 
-    for child in frame_botones.winfo_children():
+    for child in frame_botones_productos.winfo_children():
         child.bind("<Enter>", on_enter)
         child.bind("<Leave>", on_leave)
+
+    for col in ("ID", "Nombre", "Cantidad", "Precio", "Categoría"):
+        tabla.heading(col, text=col, command=lambda _col=col: sort_by_column(_col, False))
 
     actualizar_tabla()
     actualizar_categorias_combo()
