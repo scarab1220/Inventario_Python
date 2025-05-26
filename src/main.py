@@ -9,8 +9,7 @@ if __name__ == "__main__":
     inventario = Inventario(storage)
     inventario.cargar()
     categorias = cargar_categorias("data/categorias.json")
-    # If you need to set categories in inventario, do it here:
-    # inventario.set_categorias(categorias)
+    inventario.set_categorias(categorias)
     iniciar_interfaz(inventario)
-    guardar_categorias("data/categorias.json", categorias)
+    guardar_categorias("data/categorias.json", inventario.listar_categorias())
 

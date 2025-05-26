@@ -58,6 +58,9 @@ class Inventario:
             return True
         return False
 
+    def set_categorias(self, categorias):
+        self._categorias = categorias
+
     def listar_categorias(self):
         return self._categorias
     
