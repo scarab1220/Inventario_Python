@@ -1,17 +1,14 @@
 {
-    "acciones": {
-        "acciones": {
-            "acciones": {
-                "acciones": {
-                    "acciones": {
-                        "acciones": {
-                            "acciones": {
-                                "acciones": []
-                            }
-                        }
-                    }
-                }
-            }
+    "acciones": [
+        {
+            "fecha": "2025-05-26 14:35:20",
+            "accion": "Crear producto",
+            "descripcion": "Producto 'Pepsi' creado."
+        },
+        {
+            "fecha": "2025-05-26 14:36:00",
+            "accion": "Actualizar producto",
+            "descripcion": "Producto 'Coca Cola' actualizado."
         }
-    }
+    ]
 }

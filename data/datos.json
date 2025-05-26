@@ -3,7 +3,7 @@
         "id": "1",
         "nombre": "Coca Cola",
         "cantidad": 10,
-        "precio": 12.5,
+        "precio": 0.75,
         "categoria": "Bebidas Enlatadas"
     },
     {
@@ -32,6 +32,13 @@
         "nombre": "SalvaCola",
         "cantidad": 8,
         "precio": 0.5,
+        "categoria": "Bebidas Enlatadas"
+    },
+    {
+        "id": "fd016736-19f5-477b-a39a-e64838478e28",
+        "nombre": "Pepsi",
+        "cantidad": 5,
+        "precio": 0.6,
         "categoria": "Bebidas Enlatadas"
     }
 ]
