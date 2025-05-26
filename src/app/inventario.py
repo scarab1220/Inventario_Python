@@ -30,12 +30,13 @@ class Inventario:
                 return producto
         return None
 
-    def actualizar(self, id, nombre, cantidad, precio):
+    def actualizar(self, id, nombre, cantidad, precio, categoria):
         producto = self.buscar(id)
         if producto:
             producto.nombre = nombre
             producto.cantidad = cantidad
             producto.precio = precio
+            producto.categoria = categoria
             self.guardar()
             return True
         return False

@@ -6,14 +6,14 @@ def iniciar_interfaz(inventario):
     root = tk.Tk()
     root.title("Sistema de Inventario")
     root.geometry("900x600")
-    root.resizable(False, False)
+    root.resizable(True, True)  # Allow window resizing
 
     # Modern style
     style = ttk.Style(root)
     style.theme_use("clam")
     style.configure("TFrame", background="#e3f0fc")
     style.configure("TLabel", background="#e3f0fc", foreground="#1a3c6b")
-    style.configure("TButton", font=("Segoe UI", 10, "bold"), padding=8, background="#4a90e2", foreground="white")
+    style.configure("TButton", font=("Segoe UI", 10, "bold"), padding=12, background="#4a90e2", foreground="white")
     style.map("TButton",
           background=[("active", "#357ab8")],
           foreground=[("active", "white")])
@@ -39,7 +39,7 @@ def iniciar_interfaz(inventario):
     ribbon.pack(fill="x", padx=10, pady=(10, 0))
 
     # Product Actions
-    product_frame = ttk.LabelFrame(ribbon, text="Acciones de Producto", padding=5)
+    product_frame = ttk.LabelFrame(ribbon, text="Acciones de Producto", padding=8)
     product_frame.pack(side="left", padx=5, pady=0)
     ttk.Button(product_frame, text="Crear", command=lambda: crear_producto()).pack(side="left", padx=2)
     ttk.Button(product_frame, text="Actualizar", command=lambda: actualizar_producto()).pack(side="left", padx=2)
@@ -47,14 +47,14 @@ def iniciar_interfaz(inventario):
     ttk.Button(product_frame, text="Limpiar", command=lambda: limpiar_campos()).pack(side="left", padx=2)
 
     # Category Actions
-    category_frame = ttk.LabelFrame(ribbon, text="Acciones de Categoría", padding=5)
+    category_frame = ttk.LabelFrame(ribbon, text="Acciones de Categoría", padding=8)
     category_frame.pack(side="left", padx=5, pady=0)
     ttk.Button(category_frame, text="Mostrar Categorías", command=lambda: mostrar_categorias()).pack(side="left", padx=2)
     ttk.Button(category_frame, text="Crear Categoría", command=lambda: crear_categoria()).pack(side="left", padx=2)
     ttk.Button(category_frame, text="Eliminar Categoría", command=lambda: eliminar_categoria()).pack(side="left", padx=2)
 
     # Filter
-    filter_frame = ttk.LabelFrame(ribbon, text="Filtrar Productos", padding=5)
+    filter_frame = ttk.LabelFrame(ribbon, text="Filtrar Productos", padding=8)
     filter_frame.pack(side="left", padx=5, pady=0)
     ttk.Label(filter_frame, text="Filtrar:").pack(side="left", padx=2)
     filter_entry = ttk.Entry(filter_frame, textvariable=filter_var, width=15)
@@ -77,10 +77,13 @@ def iniciar_interfaz(inventario):
     # === PRODUCT TABLE WITH SCROLLBARS ===
     frame_tabla = ttk.Frame(root)
     frame_tabla.pack(fill="both", expand=True, padx=10, pady=10)
+
     scrollbar_x = ttk.Scrollbar(frame_tabla, orient="horizontal")
     scrollbar_x.pack(side="bottom", fill="x")
+
     scrollbar_y = ttk.Scrollbar(frame_tabla, orient="vertical")
     scrollbar_y.pack(side="right", fill="y")
+
     tabla = ttk.Treeview(
         frame_tabla,
         columns=("ID", "Nombre", "Cantidad", "Precio", "Categoría"),
@@ -88,15 +91,15 @@ def iniciar_interfaz(inventario):
         yscrollcommand=scrollbar_y.set,
         xscrollcommand=scrollbar_x.set
     )
-    tabla.heading("ID", text="ID")
-    tabla.heading("Nombre", text="Nombre")
-    tabla.heading("Cantidad", text="Cantidad")
-    tabla.heading("Precio", text="Precio")
-    tabla.heading("Categoría", text="Categoría")
-    tabla.pack(side="left", fill="both", expand=True)
+    tabla.pack(side="left", fill="both", expand=True)  # This makes the table expand with the frame
+
     scrollbar_y.config(command=tabla.yview)
     scrollbar_x.config(command=tabla.xview)
     tabla.bind("<<TreeviewSelect>>", lambda event: seleccionar_producto(event))
+
+    # Set column properties
+    for col in ("ID", "Nombre", "Cantidad", "Precio", "Categoría"):
+        tabla.column(col, width=100, anchor="center", stretch=True)
 
     # === PRODUCT CRUD FUNCTIONS ===
     def crear_producto():

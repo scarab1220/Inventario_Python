@@ -4,20 +4,20 @@
         "nombre": "Coca-Cola",
         "cantidad": 5,
         "precio": 0.75,
-        "categoria": null
+        "categoria": "Bebidas Enlatadas"
     },
     {
         "id": "79bd7f65",
         "nombre": "Fanta",
         "cantidad": 7,
         "precio": 0.75,
-        "categoria": null
+        "categoria": "Bebidas Enlatadas"
     },
     {
         "id": "98378f86",
         "nombre": "7-Up",
         "cantidad": 8,
         "precio": 0.75,
-        "categoria": null
+        "categoria": "Bebidas Enlatadas"
     }
 ]
