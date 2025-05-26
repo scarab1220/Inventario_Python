@@ -1,6 +1,6 @@
 # src/storage.py
 import json
-from producto import Producto
+from app.producto import Producto
 
 class JsonStorage:
     def __init__(self, ruta):

@@ -1,0 +1,17 @@
+import json
+from app.categoria import Categoria
+
+def cargar_categorias(ruta):
+    try:
+        with open(ruta, "r") as f:
+            datos = json.load(f)
+            return [Categoria.from_dict(item) for item in datos]
+        
+    except FileNotFoundError:
+        return []
+    
+def guardar_categorias(ruta, categorias):
+    with open(ruta, "w") as f:
+        json.dump([c.to_dict() for c in categorias], f, indent=4)
+
+    

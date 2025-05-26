@@ -1,7 +1,7 @@
 # src/gui.py
 import tkinter as tk
 from tkinter import ttk, messagebox
-from producto import Producto
+from app.producto import Producto
 
 def iniciar_interfaz(inventario):
     root = tk.Tk()
@@ -81,6 +81,10 @@ def iniciar_interfaz(inventario):
             actualizar_tabla()
             limpiar_campos()
 
+    def mostrar_categorias():
+        categorias_str = "\n".join(f"{c.nombre} ({len(c.productos)} productos)" for c in inventario.listar_categorias())
+        messagebox.showinfo("Categorías", categorias_str if categorias_str else "No hay categorías registradas.")
+    
     # === Layout ===
 
     frame_form = ttk.LabelFrame(root, text="Datos del producto", padding=10)
@@ -102,6 +106,7 @@ def iniciar_interfaz(inventario):
     ttk.Button(frame_botones, text="Actualizar", command=actualizar_producto).grid(row=0, column=1, padx=5)
     ttk.Button(frame_botones, text="Eliminar", command=eliminar_producto).grid(row=0, column=2, padx=5)
     ttk.Button(frame_botones, text="Limpiar", command=limpiar_campos).grid(row=0, column=3, padx=5)
+    ttk.Button(frame_botones, text="Mostrar Categorías", command=mostrar_categorias).grid(row=0, column=4, padx=5)
 
     tabla = ttk.Treeview(root, columns=("ID", "Nombre", "Cantidad", "Precio"), show="headings")
     tabla.heading("ID", text="ID")

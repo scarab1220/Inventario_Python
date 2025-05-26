@@ -1,10 +1,12 @@
 # src/inventario.py
-from producto import Producto
+from app.producto import Producto
+from app.categoria import Categoria
 import uuid
 
 class Inventario:
     def __init__(self, storage):
         self._productos = []
+        self._categorias = []
         self._storage = storage
 
     def cargar(self):
@@ -45,3 +47,19 @@ class Inventario:
             self.guardar()
             return True
         return False
+
+    def agregar_producto(self, producto):
+        self._productos.append(producto)
+
+    def agregar_categoria(self, categoria):
+        if categoria.nombre not in [c.nombre for c in self._categorias]:
+            self._categorias.append(categoria)
+
+    def listar_categorias(self):
+        return self._categorias
+    
+    def buscar_categoria(self, id):
+        for categoria in self._categorias:
+            if categoria.id == id:
+                return categoria
+        return None
