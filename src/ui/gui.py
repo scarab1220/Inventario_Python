@@ -53,26 +53,36 @@ def iniciar_interfaz(inventario):
     ttk.Button(category_frame, text="Crear Categoría", command=lambda: crear_categoria()).pack(side="left", padx=2)
     ttk.Button(category_frame, text="Eliminar Categoría", command=lambda: eliminar_categoria()).pack(side="left", padx=2)
 
-    # Filter
-    filter_frame = ttk.LabelFrame(ribbon, text="Filtrar Productos", padding=8)
-    filter_frame.pack(side="left", padx=5, pady=0)
+    # === TOP ROW: Product Form and Filter ===
+    top_row_frame = ttk.Frame(root)
+    top_row_frame.pack(fill="x", padx=10, pady=5)
+
+    # Product Form (left)
+    frame_form = ttk.LabelFrame(top_row_frame, text="Datos del producto", padding=10)
+    frame_form.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
+
+    ttk.Label(frame_form, text="Nombre:").grid(row=0, column=0, sticky="e", padx=2, pady=2)
+    ttk.Entry(frame_form, textvariable=nombre_var, width=30).grid(row=0, column=1, padx=2, pady=2)
+    ttk.Label(frame_form, text="Cantidad:").grid(row=1, column=0, sticky="e", padx=2, pady=2)
+    ttk.Entry(frame_form, textvariable=cantidad_var, width=10).grid(row=1, column=1, sticky="w", padx=2, pady=2)
+    ttk.Label(frame_form, text="Precio:").grid(row=2, column=0, sticky="e", padx=2, pady=2)
+    ttk.Entry(frame_form, textvariable=precio_var, width=10).grid(row=2, column=1, sticky="w", padx=2, pady=2)
+    ttk.Label(frame_form, text="Categoría:").grid(row=3, column=0, sticky="e", padx=2, pady=2)
+    categoria_combo = ttk.Combobox(frame_form, textvariable=categoria_var, state="readonly")
+    categoria_combo.grid(row=3, column=1, padx=2, pady=2, sticky="ew")
+    frame_form.columnconfigure(1, weight=1)
+
+    # Filter (right)
+    filter_frame = ttk.LabelFrame(top_row_frame, text="Filtrar Productos", padding=8)
+    filter_frame.grid(row=0, column=1, sticky="nsew")
     ttk.Label(filter_frame, text="Filtrar:").pack(side="left", padx=2)
     filter_entry = ttk.Entry(filter_frame, textvariable=filter_var, width=15)
     filter_entry.pack(side="left", padx=2)
     ttk.Button(filter_frame, text="Aplicar Filtro", command=lambda: filtrar_tabla()).pack(side="left", padx=2)
 
-    # === FORM ===
-    frame_form = ttk.LabelFrame(root, text="Datos del producto", padding=10)
-    frame_form.pack(fill="x", padx=10, pady=5)
-    ttk.Label(frame_form, text="Nombre:").grid(row=0, column=0, sticky="e")
-    ttk.Entry(frame_form, textvariable=nombre_var, width=30).grid(row=0, column=1, padx=5)
-    ttk.Label(frame_form, text="Cantidad:").grid(row=1, column=0, sticky="e")
-    ttk.Entry(frame_form, textvariable=cantidad_var, width=10).grid(row=1, column=1, sticky="w", padx=5)
-    ttk.Label(frame_form, text="Precio:").grid(row=2, column=0, sticky="e")
-    ttk.Entry(frame_form, textvariable=precio_var, width=10).grid(row=2, column=1, sticky="w", padx=5)
-    ttk.Label(frame_form, text="Categoría:").grid(row=3, column=0, sticky="e")
-    categoria_combo = ttk.Combobox(frame_form, textvariable=categoria_var, state="readonly", width=28)
-    categoria_combo.grid(row=3, column=1, padx=5, pady=2)
+    # Make both columns expand equally if window is resized
+    top_row_frame.columnconfigure(0, weight=1)
+    top_row_frame.columnconfigure(1, weight=1)
 
     # === PRODUCT TABLE WITH SCROLLBARS ===
     frame_tabla = ttk.Frame(root)
@@ -91,13 +101,12 @@ def iniciar_interfaz(inventario):
         yscrollcommand=scrollbar_y.set,
         xscrollcommand=scrollbar_x.set
     )
-    tabla.pack(side="left", fill="both", expand=True)  # This makes the table expand with the frame
+    tabla.pack(side="left", fill="both", expand=True)
 
     scrollbar_y.config(command=tabla.yview)
     scrollbar_x.config(command=tabla.xview)
     tabla.bind("<<TreeviewSelect>>", lambda event: seleccionar_producto(event))
 
-    # Set column properties
     for col in ("ID", "Nombre", "Cantidad", "Precio", "Categoría"):
         tabla.column(col, width=100, anchor="center", stretch=True)
 
