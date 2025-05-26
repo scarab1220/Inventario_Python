@@ -1,5 +1,9 @@
 import json
+import sys
+import os
 from app.categoria import Categoria
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 def cargar_categorias(ruta):
     try:
@@ -14,4 +18,3 @@ def guardar_categorias(ruta, categorias):
     with open(ruta, "w") as f:
         json.dump([c.to_dict() for c in categorias], f, indent=4)
 
-    
