@@ -15,7 +15,6 @@ env/
 
 # Archivos de datos
 datos.txt
-*.json
 
 # Otros
 .DS_Store

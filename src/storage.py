@@ -2,17 +2,21 @@
 import json
 from producto import Producto
 
-def cargar_datos(ruta):
-    productos = []
-    try:
-        with open(ruta, "r") as f:
-            datos = json.load(f)
-            for item in datos:
-                productos.append(Producto.from_dict(item))
-    except FileNotFoundError:
-        pass
-    return productos
+class JsonStorage:
+    def __init__(self, ruta):
+        self.ruta = ruta
 
-def guardar_datos(ruta, productos):
-    with open(ruta, "w") as f:
-        json.dump([p.to_dict() for p in productos], f, indent=4)
+    def cargar(self):
+        productos = []
+        try:
+            with open(self.ruta, "r") as f:
+                datos = json.load(f)
+                for item in datos:
+                    productos.append(Producto.from_dict(item))
+        except FileNotFoundError:
+            pass
+        return productos
+
+    def guardar(self, productos):
+        with open(self.ruta, "w") as f:
+            json.dump([p.to_dict() for p in productos], f, indent=4)
