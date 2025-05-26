@@ -14,10 +14,9 @@ class Inventario:
     def guardar(self):
         self._storage.guardar(self._productos)
 
-    def agregar(self, nombre, cantidad, precio):
-        id = str(uuid.uuid4())[:8]
-        producto = Producto(id, nombre, cantidad, precio)
-        self._productos.append(producto)
+    def agregar(self, nombre, cantidad, precio, categoria):
+        nuevo_producto = Producto(nombre, cantidad, precio, categoria)
+        self._productos.append(nuevo_producto)
         self.guardar()
 
     def listar(self):
@@ -68,3 +67,11 @@ class Inventario:
             if categoria.id == id:
                 return categoria
         return None
+
+def actualizar_tabla(tabla, inventario):
+    tabla.delete(*tabla.get_children())
+    for p in inventario.listar():
+        tabla.insert(
+            "", "end", iid=p.id,
+            values=(p.id, p.nombre, p.cantidad, f"${p.precio:.2f}", getattr(p, "categoria", ""))
+        )

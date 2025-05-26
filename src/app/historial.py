@@ -20,6 +20,16 @@ class Historial:
             "acciones": self.acciones
         }
 
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            id=data["id"],
+            nombre=data["nombre"],
+            cantidad=int(data["cantidad"]),
+            precio=float(data["precio"]),
+            categoria=data.get("categoria", "")
+        )
+
     def cargar_desde_lista(self, lista):
         self.acciones = lista
 

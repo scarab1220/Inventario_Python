@@ -1,13 +1,12 @@
-class Producto:
-    def __init__(self, id, nombre, cantidad, precio, categoria=None):
-        self.id = id
-        self.nombre = nombre
-        self.cantidad = cantidad
-        self.precio = precio
-        self.categoria = categoria
+import uuid
 
-    def __str__(self):
-        return f"{self.id} | {self.nombre} | {self.cantidad} | ${self.precio:.2f} | {self.categoria}"
+class Producto:
+    def __init__(self, nombre, cantidad, precio, categoria, id=None):
+        self.id = id or str(uuid.uuid4())
+        self.nombre = nombre
+        self.cantidad = int(cantidad)
+        self.precio = float(precio)
+        self.categoria = categoria
 
     def to_dict(self):
         return {
@@ -21,9 +20,10 @@ class Producto:
     @classmethod
     def from_dict(cls, data):
         return cls(
-            id=data["id"],
             nombre=data["nombre"],
-            cantidad=data["cantidad"],
-            precio=data["precio"],
-            categoria=data.get("categoria", None)
+            cantidad=int(data["cantidad"]),
+            precio=float(data["precio"]),
+            categoria=data.get("categoria", ""),
+            id=data.get("id")
         )
+

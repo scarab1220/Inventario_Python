@@ -34,97 +34,39 @@ def iniciar_interfaz(inventario, historial):
     categoria_var = tk.StringVar()
     filter_var = tk.StringVar()
 
-    # === CINTA DE ACCIONES (RIBBON) ===
-    ribbon = ttk.Frame(root, padding=10)
-    ribbon.pack(fill="x", padx=10, pady=(10, 0))
-
-    # Acciones de Producto
-    product_frame = ttk.LabelFrame(ribbon, text="Acciones de Producto", padding=8)
-    product_frame.pack(side="left", padx=5, pady=0)
-    ttk.Button(product_frame, text="Crear", command=lambda: crear_producto()).pack(side="left", padx=2)
-    ttk.Button(product_frame, text="Actualizar", command=lambda: actualizar_producto()).pack(side="left", padx=2)
-    ttk.Button(product_frame, text="Eliminar", command=lambda: eliminar_producto()).pack(side="left", padx=2)
-    ttk.Button(product_frame, text="Limpiar", command=lambda: limpiar_campos()).pack(side="left", padx=2)
-
-    # Acciones de Categoría
-    category_frame = ttk.LabelFrame(ribbon, text="Acciones de Categoría", padding=8)
-    category_frame.pack(side="left", padx=5, pady=0)
-    ttk.Button(category_frame, text="Mostrar Categorías", command=lambda: mostrar_categorias()).pack(side="left", padx=2)
-    ttk.Button(category_frame, text="Crear Categoría", command=lambda: crear_categoria()).pack(side="left", padx=2)
-    ttk.Button(category_frame, text="Eliminar Categoría", command=lambda: eliminar_categoria()).pack(side="left", padx=2)
-
-    # === FILA SUPERIOR: FORMULARIO Y FILTRO ===
-    top_row_frame = ttk.Frame(root)
-    top_row_frame.pack(fill="x", padx=10, pady=5)
-
-    # Formulario de Producto (izquierda)
-    frame_form = ttk.LabelFrame(top_row_frame, text="Datos del producto", padding=10)
-    frame_form.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
-
-    ttk.Label(frame_form, text="Nombre:").grid(row=0, column=0, sticky="e", padx=2, pady=2)
-    ttk.Entry(frame_form, textvariable=nombre_var, width=30).grid(row=0, column=1, padx=2, pady=2)
-    ttk.Label(frame_form, text="Cantidad:").grid(row=1, column=0, sticky="e", padx=2, pady=2)
-    ttk.Entry(frame_form, textvariable=cantidad_var, width=10).grid(row=1, column=1, sticky="w", padx=2, pady=2)
-    ttk.Label(frame_form, text="Precio:").grid(row=2, column=0, sticky="e", padx=2, pady=2)
-    ttk.Entry(frame_form, textvariable=precio_var, width=10).grid(row=2, column=1, sticky="w", padx=2, pady=2)
-    ttk.Label(frame_form, text="Categoría:").grid(row=3, column=0, sticky="e", padx=2, pady=2)
-    categoria_combo = ttk.Combobox(frame_form, textvariable=categoria_var, state="readonly")
-    categoria_combo.grid(row=3, column=1, padx=2, pady=2, sticky="ew")
-    frame_form.columnconfigure(1, weight=1)
-
-    # Filtro de Productos (derecha)
-    filter_frame = ttk.LabelFrame(top_row_frame, text="Filtrar Productos", padding=8)
-    filter_frame.grid(row=0, column=1, sticky="nsew")
-    ttk.Label(filter_frame, text="Filtrar:").pack(side="left", padx=2)
-    filter_entry = ttk.Entry(filter_frame, textvariable=filter_var, width=15)
-    filter_entry.pack(side="left", padx=2)
-    ttk.Button(filter_frame, text="Aplicar Filtro", command=lambda: filtrar_tabla()).pack(side="left", padx=2)
-
-    # Hacer que ambas columnas se expandan si la ventana cambia de tamaño
-    top_row_frame.columnconfigure(0, weight=1)
-    top_row_frame.columnconfigure(1, weight=1)
-
-    # === TABLA DE PRODUCTOS CON BARRAS DE DESPLAZAMIENTO ===
-    frame_tabla = ttk.Frame(root)
-    frame_tabla.pack(fill="both", expand=True, padx=10, pady=10)
-
-    scrollbar_x = ttk.Scrollbar(frame_tabla, orient="horizontal")
-    scrollbar_x.pack(side="bottom", fill="x")
-
-    scrollbar_y = ttk.Scrollbar(frame_tabla, orient="vertical")
-    scrollbar_y.pack(side="right", fill="y")
-
-    tabla = ttk.Treeview(
-        frame_tabla,
-        columns=("ID", "Nombre", "Cantidad", "Precio", "Categoría"),
-        show="headings",
-        yscrollcommand=scrollbar_y.set,
-        xscrollcommand=scrollbar_x.set
-    )
-    tabla.pack(side="left", fill="both", expand=True)
-
-    scrollbar_y.config(command=tabla.yview)
-    scrollbar_x.config(command=tabla.xview)
-    tabla.bind("<<TreeviewSelect>>", lambda event: seleccionar_producto(event))
-
-    for col in ("ID", "Nombre", "Cantidad", "Precio", "Categoría"):
-        tabla.column(col, width=100, anchor="center", stretch=True)
-
     # === FUNCIONES CRUD DE PRODUCTO ===
     def crear_producto():
+        nombre = nombre_var.get().strip()
+        cantidad = cantidad_var.get().strip()
+        precio = precio_var.get().strip()
+        categoria = categoria_var.get().strip()
+
+        # Validaciones amigables
+        if not nombre:
+            messagebox.showwarning("Campo requerido", "Por favor ingresa el nombre del producto.")
+            return
+        if not cantidad:
+            messagebox.showwarning("Campo requerido", "Por favor ingresa la cantidad.")
+            return
+        if not precio:
+            messagebox.showwarning("Campo requerido", "Por favor ingresa el precio.")
+            return
+        if not categoria:
+            messagebox.showwarning("Campo requerido", "Por favor selecciona una categoría.")
+            return
+
         try:
-            nombre = nombre_var.get()
-            cantidad = int(cantidad_var.get())
-            precio = float(precio_var.get())
-            categoria = categoria_var.get()
-            if not nombre:
-                raise ValueError("Nombre vacío.")
-            inventario.agregar(nombre, cantidad, precio, categoria)
-            historial.registrar_accion("Crear producto", f"Producto '{nombre}' creado.")
-            actualizar_tabla()
-            limpiar_campos()
-        except ValueError as e:
-            messagebox.showerror("Error", f"Datos inválidos: {e}")
+            cantidad = int(cantidad)
+            precio = float(precio)
+        except ValueError:
+            messagebox.showerror("Error de formato", "Cantidad debe ser un número entero y precio un número decimal.")
+            return
+
+        inventario.agregar(nombre, cantidad, precio, categoria)
+        historial.registrar_accion("Crear producto", f"Producto '{nombre}' creado.")
+        actualizar_tabla()
+        limpiar_campos()
+        messagebox.showinfo("Éxito", f"Producto '{nombre}' creado correctamente.")
 
     def actualizar_producto():
         if not producto_seleccionado[0]:
@@ -183,7 +125,7 @@ def iniciar_interfaz(inventario, historial):
         for p in inventario.listar():
             tabla.insert(
                 "", "end", iid=p.id,
-                values=(p.id, p.nombre, p.cantidad, f"${p.precio:.2f}", getattr(p, "categoria", ""))
+                values=(p.id, p.nombre, p.cantidad, f"${float(p.precio):.2f}", getattr(p, "categoria", ""))
             )
 
     # === FUNCIONES CRUD DE CATEGORÍA ===
@@ -244,6 +186,106 @@ def iniciar_interfaz(inventario, historial):
         for index, (val, child) in enumerate(data):
             tabla.move(child, '', index)
         tabla.heading(col, command=lambda: sort_by_column(col, not reverse))
+
+    # === FUNCIÓN PARA MOSTRAR EL HISTORIAL ===
+    def mostrar_historial():
+        ventana_historial = tk.Toplevel(root)
+        ventana_historial.title("Historial de acciones")
+        ventana_historial.geometry("600x400")
+        tree = ttk.Treeview(ventana_historial, columns=("Fecha", "Acción", "Descripción"), show="headings")
+        tree.heading("Fecha", text="Fecha")
+        tree.heading("Acción", text="Acción")
+        tree.heading("Descripción", text="Descripción")
+        tree.pack(fill="both", expand=True)
+
+        # Scrollbar vertical
+        scrollbar = ttk.Scrollbar(ventana_historial, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
+
+        for accion in historial.obtener_historial():
+            tree.insert("", "end", values=(accion["fecha"], accion["accion"], accion["descripcion"]))
+
+    # === CINTA DE ACCIONES (RIBBON) ===
+    ribbon = ttk.Frame(root, padding=10)
+    ribbon.pack(fill="x", padx=10, pady=(10, 0))
+
+    # Acciones de Producto
+    product_frame = ttk.LabelFrame(ribbon, text="Acciones de Producto", padding=8)
+    product_frame.pack(side="left", padx=5, pady=0)
+    ttk.Button(product_frame, text="Crear", command=crear_producto).pack(side="left", padx=2)
+    ttk.Button(product_frame, text="Actualizar", command=actualizar_producto).pack(side="left", padx=2)
+    ttk.Button(product_frame, text="Eliminar", command=eliminar_producto).pack(side="left", padx=2)
+    ttk.Button(product_frame, text="Limpiar", command=limpiar_campos).pack(side="left", padx=2)
+
+    # Acciones de Categoría
+    category_frame = ttk.LabelFrame(ribbon, text="Acciones de Categoría", padding=8)
+    category_frame.pack(side="left", padx=5, pady=0)
+    ttk.Button(category_frame, text="Mostrar Categorías", command=mostrar_categorias).pack(side="left", padx=2)
+    ttk.Button(category_frame, text="Crear Categoría", command=crear_categoria).pack(side="left", padx=2)
+    ttk.Button(category_frame, text="Eliminar Categoría", command=eliminar_categoria).pack(side="left", padx=2)
+
+    # Historial
+    history_frame = ttk.LabelFrame(ribbon, text="Historial", padding=8)
+    history_frame.pack(side="left", padx=5, pady=0)
+    ttk.Button(history_frame, text="Ver Historial", command=mostrar_historial).pack(side="left", padx=2)
+
+    # === FILA SUPERIOR: FORMULARIO Y FILTRO ===
+    top_row_frame = ttk.Frame(root)
+    top_row_frame.pack(fill="x", padx=10, pady=5)
+
+    # Formulario de Producto (izquierda)
+    frame_form = ttk.LabelFrame(top_row_frame, text="Datos del producto", padding=10)
+    frame_form.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
+
+    ttk.Label(frame_form, text="Nombre:").grid(row=0, column=0, sticky="e", padx=2, pady=2)
+    ttk.Entry(frame_form, textvariable=nombre_var, width=30).grid(row=0, column=1, padx=2, pady=2, sticky="ew")
+    ttk.Label(frame_form, text="Cantidad:").grid(row=1, column=0, sticky="e", padx=2, pady=2)
+    ttk.Entry(frame_form, textvariable=cantidad_var, width=10).grid(row=1, column=1, sticky="w", padx=2, pady=2)
+    ttk.Label(frame_form, text="Precio:").grid(row=2, column=0, sticky="e", padx=2, pady=2)
+    ttk.Entry(frame_form, textvariable=precio_var, width=10).grid(row=2, column=1, sticky="w", padx=2, pady=2)
+    ttk.Label(frame_form, text="Categoría:").grid(row=3, column=0, sticky="e", padx=2, pady=2)
+    categoria_combo = ttk.Combobox(frame_form, textvariable=categoria_var, state="readonly")
+    categoria_combo.grid(row=3, column=1, padx=2, pady=2, sticky="ew")
+    frame_form.columnconfigure(1, weight=1)
+
+    # Filtro de Productos (derecha)
+    filter_frame = ttk.LabelFrame(top_row_frame, text="Filtrar Productos", padding=8)
+    filter_frame.grid(row=0, column=1, sticky="nsew")
+    ttk.Label(filter_frame, text="Filtrar:").pack(side="left", padx=2)
+    filter_entry = ttk.Entry(filter_frame, textvariable=filter_var, width=15)
+    filter_entry.pack(side="left", padx=2)
+    ttk.Button(filter_frame, text="Aplicar Filtro", command=filtrar_tabla).pack(side="left", padx=2)
+
+    # Hacer que ambas columnas se expandan si la ventana cambia de tamaño
+    top_row_frame.columnconfigure(0, weight=1)
+    top_row_frame.columnconfigure(1, weight=1)
+
+    # === TABLA DE PRODUCTOS CON BARRAS DE DESPLAZAMIENTO ===
+    frame_tabla = ttk.Frame(root)
+    frame_tabla.pack(fill="both", expand=True, padx=10, pady=10)
+
+    scrollbar_x = ttk.Scrollbar(frame_tabla, orient="horizontal")
+    scrollbar_x.pack(side="bottom", fill="x")
+
+    scrollbar_y = ttk.Scrollbar(frame_tabla, orient="vertical")
+    scrollbar_y.pack(side="right", fill="y")
+
+    tabla = ttk.Treeview(
+        frame_tabla,
+        columns=("ID", "Nombre", "Cantidad", "Precio", "Categoría"),
+        show="headings",
+        yscrollcommand=scrollbar_y.set,
+        xscrollcommand=scrollbar_x.set
+    )
+    tabla.pack(side="left", fill="both", expand=True)
+
+    scrollbar_y.config(command=tabla.yview)
+    scrollbar_x.config(command=tabla.xview)
+    tabla.bind("<<TreeviewSelect>>", lambda event: seleccionar_producto(event))
+
+    for col in ("ID", "Nombre", "Cantidad", "Precio", "Categoría"):
+        tabla.column(col, width=100, anchor="center", stretch=True)
 
     # Habilitar ordenamiento en todas las columnas
     for col in ("ID", "Nombre", "Cantidad", "Precio", "Categoría"):

@@ -1,9 +1,9 @@
 [
     {
-        "id": "45daeb08",
-        "nombre": "Coca-Cola",
-        "cantidad": 5,
-        "precio": 0.75,
+        "id": "1",
+        "nombre": "Coca Cola",
+        "cantidad": 10,
+        "precio": 12.5,
         "categoria": "Bebidas Enlatadas"
     },
     {
@@ -18,6 +18,20 @@
         "nombre": "7-Up",
         "cantidad": 8,
         "precio": 0.75,
+        "categoria": "Bebidas Enlatadas"
+    },
+    {
+        "id": "3b0c7e04-7fd7-451b-8512-efc938693923",
+        "nombre": "Te Lipton",
+        "cantidad": 10,
+        "precio": 1.0,
+        "categoria": "Bebidas Enlatadas"
+    },
+    {
+        "id": "c9bf911a-3c71-4240-9275-00aaa60de735",
+        "nombre": "SalvaCola",
+        "cantidad": 8,
+        "precio": 0.5,
         "categoria": "Bebidas Enlatadas"
     }
 ]

@@ -12,7 +12,14 @@ if __name__ == "__main__":
     categorias = cargar_categorias("data/categorias.json")
     inventario.set_categorias(categorias)
     historial = Historial()
+    # --- Cargar historial antes de la interfaz ---
+    datos_historial = cargar_historial("data/historial.json")
+    if isinstance(datos_historial, dict) and "acciones" in datos_historial:
+        historial.cargar_desde_lista(datos_historial["acciones"])
+    elif isinstance(datos_historial, list):
+        historial.cargar_desde_lista(datos_historial)
+    # --- Ejecutar interfaz ---
     iniciar_interfaz(inventario, historial)
+    # --- Guardar después de la sesión ---
     guardar_categorias("data/categorias.json", inventario.listar_categorias())
-    historial.cargar_desde_lista(cargar_historial("data/historial.json"))
     guardar_historial("data/historial.json", historial.to_dict())
