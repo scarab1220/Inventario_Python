@@ -17,4 +17,3 @@ def cargar_categorias(ruta):
 def guardar_categorias(ruta, categorias):
     with open(ruta, "w") as f:
         json.dump([c.to_dict() for c in categorias], f, indent=4)
-

@@ -26,4 +26,3 @@ class Producto:
             categoria=data.get("categoria", ""),
             id=data.get("id")
         )
-

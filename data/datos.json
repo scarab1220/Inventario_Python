@@ -33,5 +33,19 @@
         "cantidad": 10,
         "precio": 0.75,
         "categoria": "Bebidas Enlatadas"
+    },
+    {
+        "id": "f74f133b-eff6-48d8-8420-8e7e2828b137",
+        "nombre": "Agua Alpina 1000ml",
+        "cantidad": 15,
+        "precio": 0.6,
+        "categoria": "Bebidas Enlatadas"
+    },
+    {
+        "id": "0e2ded39-72d4-4fe9-9d98-5946809a724b",
+        "nombre": "Churritos Diana",
+        "cantidad": 10,
+        "precio": 0.4,
+        "categoria": "Snacks"
     }
 ]

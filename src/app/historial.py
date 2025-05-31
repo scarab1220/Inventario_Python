@@ -22,4 +22,3 @@ class Historial:
 
     def cargar_desde_lista(self, lista):
         self.acciones = lista
-

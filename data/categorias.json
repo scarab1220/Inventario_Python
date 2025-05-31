@@ -2,5 +2,9 @@
     {
         "id": "99fcadad-5c22-4f44-a916-aeffdc046eae",
         "nombre": "Bebidas Enlatadas"
+    },
+    {
+        "id": "89aea30c-7933-4229-999e-793e4319c61f",
+        "nombre": "Snacks"
     }
 ]

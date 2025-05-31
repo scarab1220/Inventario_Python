@@ -34,6 +34,41 @@
             "fecha": "2025-05-26 14:57:49",
             "accion": "Eliminar categoría",
             "descripcion": "Categoría 'Snacks' eliminada."
+        },
+        {
+            "fecha": "2025-05-26 17:30:18",
+            "accion": "Crear categoría",
+            "descripcion": "Categoría 'Bebidas Botella' creada."
+        },
+        {
+            "fecha": "2025-05-26 17:30:48",
+            "accion": "Crear producto",
+            "descripcion": "Producto 'Agua Alpina 1000ml' creado."
+        },
+        {
+            "fecha": "2025-05-30 10:21:07",
+            "accion": "Crear categoría",
+            "descripcion": "Categoría 'Snacks' creada."
+        },
+        {
+            "fecha": "2025-05-30 10:21:14",
+            "accion": "Crear producto",
+            "descripcion": "Producto 'Churritos Diana' creado."
+        },
+        {
+            "fecha": "2025-05-30 10:21:25",
+            "accion": "Actualizar producto",
+            "descripcion": "Producto 'Churritos Diana' actualizado."
+        },
+        {
+            "fecha": "2025-05-30 10:22:42",
+            "accion": "Eliminar categoría",
+            "descripcion": "Categoría 'Bebidas Botella' eliminada."
+        },
+        {
+            "fecha": "2025-05-30 10:23:19",
+            "accion": "Actualizar producto",
+            "descripcion": "Producto 'Agua Alpina 1000ml' actualizado."
         }
     ]
 }
