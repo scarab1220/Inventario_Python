@@ -62,6 +62,9 @@ INVENTARIO PROYECTO/
 └── requirements.txt
 ```
 
+![diagrama](https://github.com/user-attachments/assets/762c855f-f83a-4b3f-9bd7-7513b0c9239f)
+
+
 ## ℹ️ Notas
 
 - Los archivos de datos (`datos.json`, `categorias.json`, `historial.json`) se generan y actualizan automáticamente.
