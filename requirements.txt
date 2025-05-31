@@ -1,1 +1,9 @@
 # No hay dependencias externas necesarias.
+# El sistema utiliza solo librerías estándar de Python:
+# - tkinter
+# - csv
+# - json
+# - uuid
+# - os
+
+# Si usas un entorno virtual, asegúrate de tener Python 3.10 o superior.
