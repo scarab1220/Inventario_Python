@@ -1,6 +1,7 @@
 # src/gui.py
 import tkinter as tk
-from tkinter import ttk, messagebox, simpledialog
+from tkinter import ttk, messagebox, simpledialog, filedialog
+from app.import_export import exportar_productos_csv, importar_productos_csv
 
 def iniciar_interfaz(inventario, historial):
     root = tk.Tk()
@@ -127,6 +128,24 @@ def iniciar_interfaz(inventario, historial):
                 "", "end", iid=p.id,
                 values=(p.id, p.nombre, p.cantidad, f"${float(p.precio):.2f}", getattr(p, "categoria", ""))
             )
+    
+    def manejar_exportacion():
+        productos = inventario.listar()
+        exportar_productos_csv(productos, "productos_exportados.csv")
+        messagebox.showinfo("Exportación exitosa", "Productos exportados a productos_exportados.csv")
+
+    # === NUEVA FUNCIÓN PARA IMPORTAR DESDE CSV ===
+    def manejar_importacion():
+        ruta = filedialog.askopenfilename(
+            filetypes=[("CSV files", "*.csv"), ("Todos los archivos", "*")]
+        )
+        if ruta:
+            productos = importar_productos_csv(ruta, lambda: None)  # No actualiza tabla aquí
+            if productos:
+                for p in productos:
+                    inventario.agregar(p["nombre"], p["cantidad"], p["precio"], p.get("categoria", ""))
+                actualizar_tabla()
+                messagebox.showinfo("Importación exitosa", f"Se importaron {len(productos)} productos.")
 
     # === FUNCIONES CRUD DE CATEGORÍA ===
     def crear_categoria():
@@ -288,6 +307,8 @@ def iniciar_interfaz(inventario, historial):
     filter_entry = ttk.Entry(filter_frame, textvariable=filter_var, width=15)
     filter_entry.pack(side="left", padx=2)
     ttk.Button(filter_frame, text="Aplicar Filtro", command=filtrar_tabla).pack(side="left", padx=2)
+    ttk.Button(filter_frame, text="Exportar a CSV", command=manejar_exportacion).pack(side="left", padx=2)
+    ttk.Button(filter_frame, text="Importar desde CSV", command=manejar_importacion).pack(side="left", padx=2)
 
     # Hacer que ambas columnas se expandan si la ventana cambia de tamaño
     top_row_frame.columnconfigure(0, weight=1)

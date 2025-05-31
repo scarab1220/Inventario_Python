@@ -5,6 +5,7 @@ from ui.gui import iniciar_interfaz
 from app.historial import Historial
 from storage.historial_storage import guardar_historial, cargar_historial
 
+
 if __name__ == "__main__":
     # Inicializar almacenamiento y cargar datos
     storage = JsonStorage("data/datos.json")

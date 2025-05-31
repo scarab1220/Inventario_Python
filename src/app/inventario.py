@@ -79,10 +79,9 @@ class Inventario:
             return False  # No se encontró la categoría
         self._categorias = categorias_filtradas
 
-        # Opcional: Elimina la referencia en los productos
         for producto in self._productos:
             if getattr(producto, "categoria", None) == nombre_categoria:
-                producto.categoria = ""
+                producto.categoria = "Sin categoría" # Asignar una categoría por defecto, por recomendacion del docente
         self.guardar()
         return True
 
